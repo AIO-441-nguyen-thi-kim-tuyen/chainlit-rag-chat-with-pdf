@@ -17,7 +17,7 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,
                                                chunk_overlap=100)
 embedding = HuggingFaceEmbeddings()
 
-llm = get_huggingface_llm()
+# llm = get_huggingface_llm()
 
 
 def test_pdf_loader():
