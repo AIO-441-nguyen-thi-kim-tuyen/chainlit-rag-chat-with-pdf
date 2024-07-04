@@ -60,7 +60,11 @@
     Ứng dụng sẽ tự động mở trong trình duyệt web mặc định của bạn tại địa chỉ `http://localhost:8000`.
 
 2. **Nếu máy local không có GPU, cần thiết để chạy quantization**
-    Chạy ứng dụng 
+    Chạy code trên Colab
+[Chainlit RAG Chat with PDF  files](https://colab.research.google.com/drive/1D14iRW96Ad8x5IHM_X2fIBpSkGDy7iZO?usp=sharing)
+[ [<img src="images/chainlit_localtunnel.png">]](Chainlit RAG with PDF files)
+[<img src="images/chainlit_localtunnel_2.png">]
+[<img src="images/chainlit_localtunnel_3.png">]
 
 ## Sử dụng ứng dụng
 

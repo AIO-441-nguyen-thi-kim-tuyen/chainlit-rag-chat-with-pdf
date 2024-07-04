@@ -13,4 +13,4 @@ pypdf
 numpy
 pytest
 pytest-cov
-coveragev
+coverage
