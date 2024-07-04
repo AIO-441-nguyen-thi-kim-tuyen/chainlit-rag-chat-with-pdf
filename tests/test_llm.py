@@ -52,28 +52,27 @@ Only be tested if Github Nvidia powered GPU hosted runner supported
 # https://medium.com/@tajinder.singh1985/exploring-github-nvidia-powered-gpu-hosted-runner-32b172a92c7e
 '''
 
-
-def test_prompting_with_rag():
-    file = AskFileResponse()
-    file.path = "./data/YOLOv10_Tutorials.pdf"
-    file.type == "application/pdf"
-    vector_db = get_vector_db(file, cl, text_splitter, embedding)
-    retriever = vector_db.as_retriever()
-
-    prompt = hub.pull("rlm/rag-prompt")
-
-    def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
-
-    rag_chain = (
-            {"context": retriever | format_docs, "question": RunnablePassthrough()}
-            | prompt
-            | llm
-            | StrOutputParser()
-    )
-
-    USER_QUESTION = "YOLOv10 là gì?"
-    output = rag_chain.invoke(USER_QUESTION)
-    answer = output.split('Answer:')[1].strip()
-    expected = "YOLOv10 là một phiên bản của YOLO (You Only Look Once) - một hệ thống dự đoán hình ảnh được huấn luyện sẵn trên bộ dữ liệu COCO."
-    assert expected.lower() in answer.lower()
+# def test_prompting_with_rag():
+#     file = AskFileResponse()
+#     file.path = "./data/YOLOv10_Tutorials.pdf"
+#     file.type == "application/pdf"
+#     vector_db = get_vector_db(file, cl, text_splitter, embedding)
+#     retriever = vector_db.as_retriever()
+#
+#     prompt = hub.pull("rlm/rag-prompt")
+#
+#     def format_docs(docs):
+#         return "\n\n".join(doc.page_content for doc in docs)
+#
+#     rag_chain = (
+#             {"context": retriever | format_docs, "question": RunnablePassthrough()}
+#             | prompt
+#             | llm
+#             | StrOutputParser()
+#     )
+#
+#     USER_QUESTION = "YOLOv10 là gì?"
+#     output = rag_chain.invoke(USER_QUESTION)
+#     answer = output.split('Answer:')[1].strip()
+#     expected = "YOLOv10 là một phiên bản của YOLO (You Only Look Once) - một hệ thống dự đoán hình ảnh được huấn luyện sẵn trên bộ dữ liệu COCO."
+#     assert expected.lower() in answer.lower()
