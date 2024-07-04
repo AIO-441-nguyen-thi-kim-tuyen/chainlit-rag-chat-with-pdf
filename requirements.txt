@@ -1,0 +1,16 @@
+transformers
+bitsandbytes
+accelerate
+langchain
+langchainhub
+langchain-chroma
+langchain-community
+langchain-openai
+langchain_huggingface
+chainlit
+python-dotenv
+pypdf
+numpy
+pytest
+pytest-cov
+coveragev
