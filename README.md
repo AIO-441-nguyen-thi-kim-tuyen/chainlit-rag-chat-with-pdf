@@ -20,8 +20,13 @@
 Để chạy ứng dụng này, bạn cần cài đặt các thư viện và công cụ sau:
 
 - Python 3.8 trở lên
-- Git
-- 
+- Chainlit
+- Langchain ...
+- Transformer
+- Pytest & Coverage 
+- ...
+
+Model: ```lmsys/vicuna-7b-v1.5```
 
 ## Cài đặt
 
@@ -62,9 +67,6 @@
 2. **Nếu máy local không có GPU, cần thiết để chạy quantization**
     Chạy code trên Colab
 [Chainlit RAG Chat with PDF  files](https://colab.research.google.com/drive/1D14iRW96Ad8x5IHM_X2fIBpSkGDy7iZO?usp=sharing)
-[ [<img src="images/chainlit_localtunnel.png">]](Chainlit RAG with PDF files)
-[<img src="images/chainlit_localtunnel_2.png">]
-[<img src="images/chainlit_localtunnel_3.png">]
 
 ## Sử dụng ứng dụng
 
@@ -79,6 +81,10 @@
 3. **Nhận câu trả lời:**
 
     Câu trả lời từ hệ thống sẽ xuất hiện ngay trong giao diện chat, giúp bạn dễ dàng truy cập thông tin cần thiết từ các tài liệu PDF.
+
+[ [<img src="images/chainlit_localtunnel.png">]](Chainlit RAG with PDF files)
+[<img src="images/chainlit_localtunnel_2.png">]
+[<img src="images/chainlit_localtunnel_3.png">]
 
 
 ## Tài liệu tham khảo

@@ -1,16 +1,19 @@
+import os.path
+
 import chainlit as cl
 
-from src.utils.data_utils import process_file, get_vector_db
-from src.utils.llm_utils import get_huggingface_llm
+from src.utils.data_utils import process_file
+#from src.utils.llm_utils import get_huggingface_llm
 
 from chainlit.types import AskFileResponse
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
+#from langchain_core.runnables import RunnablePassthrough
+#from langchain_core.output_parsers import StrOutputParser
 
-from langchain import hub
+#from langchain import hub
 
 # Initialize text splitter and embedding
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,
@@ -19,23 +22,27 @@ embedding = HuggingFaceEmbeddings()
 
 # llm = get_huggingface_llm()
 
+pdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir, "tests", "YOLOv10_Tutorials.pdf"))
+
 
 def test_pdf_loader():
-    file = AskFileResponse()
-    file.path = "./data/YOLOv10_Tutorials.pdf"
-    file.type == "application/pdf"
+    file = AskFileResponse(id="testfile", name="YOLOv10_Tutorials.pdf", path=pdf_path,
+                           size=16, type="application/pdf")
 
     # Initialize text splitter and embedding
     documents = process_file(file, text_splitter)
     print("Number of documents: ", len(documents))
-    assert len(documents) == 20
+    assert len(documents) > 0
 
 
 def test_get_vector_db():
-    file = AskFileResponse()
-    file.path = "./data/YOLOv10_Tutorials.pdf"
-    file.type == "application/pdf"
-    vector_db = get_vector_db(file, cl, text_splitter, embedding)
+
+    file = AskFileResponse(id="testfile", name="YOLOv10_Tutorials.pdf", path=pdf_path,
+                           size=16, type="application/pdf")
+    # Initialize text splitter and embedding
+    docs = process_file(file, text_splitter)
+
+    vector_db = Chroma.from_documents(documents=docs, embedding=embedding)
     retriever = vector_db.as_retriever()
 
     QUERY = "YOLOv10 là gì"

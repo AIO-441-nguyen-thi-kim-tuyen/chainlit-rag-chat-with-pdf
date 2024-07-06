@@ -1,8 +1,9 @@
 import chainlit as cl
 
 from src.utils.llm_utils import get_huggingface_llm
-from src.utils.data_utils import get_vector_db
+from src.utils.data_utils import process_file, get_vector_db_chroma
 
+from chainlit.types import AskFileResponse
 from langchain_huggingface import HuggingFaceEmbeddings
 
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -26,6 +27,16 @@ welcome_message = """Welcome to the PDF QA! To get started:
 """
 
 
+# Create a function to get vector database
+def get_vector_db(file: AskFileResponse):
+    docs = process_file(file, text_splitter)
+    cl.user_session.set("docs", docs)
+    vector_db = get_vector_db_chroma(docs, embedding)
+    return vector_db
+
+
+
+
 @cl.on_chat_start
 async def on_chat_start():
     files = None
@@ -42,7 +53,7 @@ async def on_chat_start():
                      disable_feedback=True)
     await msg.send()
 
-    vector_db = await cl.make_async(get_vector_db)(file, cl, text_splitter, embedding)
+    vector_db = await cl.make_async(get_vector_db)(file)
 
     message_history = ChatMessageHistory()
     memory = ConversationBufferMemory(

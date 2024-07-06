@@ -19,9 +19,6 @@ def process_file(file: AskFileResponse, text_splitter):
     return docs
 
 
-# Create a function to get vector database
-def get_vector_db(file: AskFileResponse, cl, text_splitter, embedding):
-    docs = process_file(file, text_splitter)
-    cl.user_session.set("docs", docs)
+def get_vector_db_chroma(docs, embedding):
     vector_db = Chroma.from_documents(documents=docs, embedding=embedding)
     return vector_db
