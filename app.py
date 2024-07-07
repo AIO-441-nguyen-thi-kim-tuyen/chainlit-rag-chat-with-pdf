@@ -1,18 +1,14 @@
 import chainlit as cl
-import torch
+
+from src.utils.llm_utils import get_huggingface_llm
+from src.utils.data_utils import process_file, get_vector_db_chroma
 
 from chainlit.types import AskFileResponse
-
-from transformers import BitsAndBytesConfig
-from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_huggingface.llms import HuggingFacePipeline
 
 from langchain_community.chat_message_histories import ChatMessageHistory
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
-from langchain_chroma import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # Initialize text splitter and embedding
@@ -20,63 +16,6 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000,
                                                chunk_overlap=100)
 
 embedding = HuggingFaceEmbeddings()
-
-
-# Create a function to load and split pdf file
-def process_file(file: AskFileResponse):
-    if file.type == "text/plain":
-        Loader = TextLoader
-    elif file.type == "application/pdf":
-        Loader = PyPDFLoader
-
-    loader = Loader(file.path)
-    documents = loader.load()
-    docs = text_splitter.split_documents(documents)
-    for i, doc in enumerate(docs):
-        doc.metadata["source"] = f"source_{i}"
-    return docs
-
-
-# Create a function to get vector database
-def get_vector_db(file: AskFileResponse):
-    docs = process_file(file)
-    cl.user_session.set("docs", docs)
-    vector_db = Chroma.from_documents(documents=docs,
-                                      embedding=embedding)
-    return vector_db
-
-
-# Create a function to get LLMs (Vicuna)
-@cl.cache
-def get_huggingface_llm(model_name: str = "lmsys/vicuna-7b-v1.5",
-                        max_new_token: int = 512):
-    nf4_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_use_double_quant=True,
-        bnb_4bit_compute_dtype=torch.bfloat16
-    )
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        quantization_config=nf4_config,
-        low_cpu_mem_usage=True
-    )
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-    model_pipeline = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=max_new_token,
-        pad_token_id=tokenizer.eos_token_id,
-        device_map="auto"
-    )
-
-    llm = HuggingFacePipeline(
-        pipeline=model_pipeline,
-    )
-    return llm
-
 
 LLM = get_huggingface_llm()
 
@@ -86,6 +25,16 @@ welcome_message = """Welcome to the PDF QA! To get started:
 1. Upload a PDF or text file
 2. Ask a question about the file
 """
+
+
+# Create a function to get vector database
+def get_vector_db(file: AskFileResponse):
+    docs = process_file(file, text_splitter)
+    cl.user_session.set("docs", docs)
+    vector_db = get_vector_db_chroma(docs, embedding)
+    return vector_db
+
+
 
 
 @cl.on_chat_start
